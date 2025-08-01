@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vecindario {
+  vecindarioId Int       @id @default(autoincrement())
+  nombre       String
+  localidadId  Int
+  Localidad    Localidad @relation(fields: [localidadId], references: [localidadId])
+  usuarios     Usuario[] // Relación con usuarios
+}
+
+model Pais {
+  paisId       Int        @id 
+  nombre       String     @unique
+  provincias   Provincia[]
+}
+
+model Provincia {
+  provinciaId  Int        @id
+  nombre       String
+  paisId       Int
+  localidades  Localidad[]
+
+  Pais         Pais       @relation(fields: [paisId], references: [paisId])
+}
+
+model Localidad {
+  localidadId  Int        @id
+  nombre       String
+  provinciaId  Int
+
+  Provincia    Provincia  @relation(fields: [provinciaId], references: [provinciaId])
+  vecindarios  Vecindario[] // Relación opcional para acceso desde Localidad
+}
+
+model Notificacion {
+  notificacionId Int       @id @default(autoincrement())
+  titulo         String
+  notificacion   String
+  contenido      String
+  tipo           String
+  fechaHora      DateTime  @default(now())
+  usuarioId      Int
+  usuario        Usuario   @relation(fields: [usuarioId], references: [usuarioId])
+}
+
+model Usuario {
+  usuarioId      Int             @id @default(autoincrement())
+  nombre         String
+  apellido       String
+  email          String          @unique
+  contrasena     String
+  telefono       String
+  direccion      String
+  calle1         String?         // New field
+  calle2         String?         // New field
+  piso           String?         // New field
+  depto          String?         // New field
+  vecindarioId   Int
+  vecindario     Vecindario      @relation(fields: [vecindarioId], references: [vecindarioId])
+  notificaciones Notificacion[]
+  alarmas        Alarma[]
+  ubicaciones    Ubicacion[]     // Relation to Ubicacion (renamed from Location)
+}
+
+model Alarma {
+  alarmaId       Int       @id @default(autoincrement())
+  activo         Boolean   @default(true)
+  fechaHora      DateTime  @default(now())
+  tipo           String
+  usuarioId      Int
+  usuario        Usuario   @relation(fields: [usuarioId], references: [usuarioId])
+  ubicaciones    Ubicacion[] // Relation to Ubicacion (renamed from Location)
+}
+
+model Ubicacion {
+  ubicacionId    Int       @id @default(autoincrement())
+  latitud        Float
+  longitud       Float
+  fechaHora      DateTime  @default(now())
+  usuarioId      Int
+  usuario        Usuario   @relation(fields: [usuarioId], references: [usuarioId])
+  alarmaId       Int
+  alarma         Alarma    @relation(fields: [alarmaId], references: [alarmaId])
+}

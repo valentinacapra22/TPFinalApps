@@ -1,0 +1,35 @@
+{
+  "scripts": {
+    "dev": "node init.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "6.3.1",
+    "@react-native-async-storage/async-storage": "^2.1.1",
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "bun": "^1.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "expo": "^52.0.33",
+    "expo-location": "~18.0.6",
+    "express": "^4.21.2",
+    "jose": "^5.9.6",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+
+    "socket.io": "^4.8.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "prisma": "6.3.1"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
