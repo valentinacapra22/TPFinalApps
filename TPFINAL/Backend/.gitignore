@@ -1,19 +1,25 @@
+# Dependencias de Node para el Backend
 node_modules/
 
+# Archivos de logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Variables de entorno
 .env
 .env.local
 
+# Archivos del sistema operativo
 .DS_Store
 Thumbs.db
 
+# IDEs (ej. VS Code, IntelliJ)
 .vscode/
 .idea/
 *.iml
 *.iws
 *.ipr
 
+# TypeScript build info
 *.tsbuildinfo

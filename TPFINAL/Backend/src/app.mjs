@@ -1,3 +1,4 @@
+// src/app.mjs
 import dotenv from 'dotenv';
 import express from "express";
 import vecindarioRoutes from "./routes/vecindarioRoutes.mjs";

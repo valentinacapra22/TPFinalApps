@@ -1,3 +1,4 @@
+// frontend/context/NotificationContext.js
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import socket from '../utils/socket';

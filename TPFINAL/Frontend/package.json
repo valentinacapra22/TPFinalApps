@@ -37,8 +37,7 @@
     "viginet": "file:"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@react-native-community/cli": "^19.1.1"
+    "@babel/core": "^7.20.0"
   },
   "private": true
 }

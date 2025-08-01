@@ -1,112 +1,79 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import axios from "axios";
 
-const RegistroScreen = ({ navigation, route }) => {
-  const [form, setForm] = useState({
-    nombre: '',
-    apellido: '',
-    telefono: '',
-    contrasena: '',
-    confirmarContrasena: '',
-  });
+export default function RegisterScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [existingEmails, setExistingEmails] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleChange = (name, value) => {
-    setForm({ ...form, [name]: value });
-  };
+  useEffect(() => {
+    const fetchEmails = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/usuarios");
+        const emails = response.data.map(user => user.email);
+        setExistingEmails(emails);
+      } catch (error) {
+        console.error("Error al obtener correos", error);
+      }
+    };
+    
+    fetchEmails();
+  }, []);
 
-  const handleSubmit = () => {
-    if (
-      !form.nombre ||
-      !form.apellido ||
-      !form.telefono ||
-      !form.contrasena ||
-      !form.confirmarContrasena
-    ) {
-      alert('Por favor complete todos los campos obligatorios.');
+  const handleRegister = () => {
+    if (!email) {
+      setErrorMessage("Por favor, ingrese un email válido.");
       return;
     }
 
-    if (form.contrasena !== form.confirmarContrasena) {
-      alert('Las contraseñas no coinciden.');
+    // Validar que el email contenga un "@"
+    if (!email.includes("@")) {
+      setErrorMessage("El correo electrónico debe contener un '@'.");
       return;
     }
 
-    // Si todo es válido, navega a ServiceDetailsScreen con los datos
-    navigation.navigate('ServiceDetails', { form });
+    if (existingEmails.includes(email)) {
+      setErrorMessage("El correo electrónico ya está registrado.");
+      return;
+    }
+
+    navigation.navigate("RegisterDetails", { email });
+    setErrorMessage("");
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Detalles del Registro</Text>
-      </View>
-
-      <Text style={styles.sectionTitle}>DATOS PERSONALES</Text>
-
-      <Text style={styles.label}>Ingrese su nombre <Text style={styles.required}>(*)</Text></Text>
+    <View style={styles.container}>
+      <Text style={styles.label}>Ingrese su email para registrarse</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nombre"
-        value={form.nombre}
-        onChangeText={(text) => handleChange('nombre', text)}
+        placeholder="email@dominio.com"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
       />
-
-      <Text style={styles.label}>Ingrese su apellido <Text style={styles.required}>(*)</Text></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Apellido"
-        value={form.apellido}
-        onChangeText={(text) => handleChange('apellido', text)}
-      />
-
-      <Text style={styles.label}>Ingrese su teléfono <Text style={styles.required}>(*)</Text></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Teléfono"
-        keyboardType="phone-pad"
-        value={form.telefono}
-        onChangeText={(text) => handleChange('telefono', text)}
-      />
-
-      <Text style={styles.label}>Ingrese una contraseña <Text style={styles.required}>(*)</Text></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
-        value={form.contrasena}
-        onChangeText={(text) => handleChange('contrasena', text)}
-      />
-      <Text style={styles.passwordHint}>
-        La contraseña debe tener al menos una mayúscula, un número y un carácter especial.
-      </Text>
-
-      <Text style={styles.label}>Confirmar contraseña <Text style={styles.required}>(*)</Text></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
-        value={form.confirmarContrasena}
-        onChangeText={(text) => handleChange('confirmarContrasena', text)}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Siguiente</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleRegister}
+      >
+        <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
-    </ScrollView>
+      
+      {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
+
+      <Text style={styles.disclaimer}>
+        Tocando, está aceptando los Términos del Servicio y las Políticas de Privacidad.
+      </Text>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingTop: 40, backgroundColor: '#F9F9F9', flexGrow: 1 },
-  header: { backgroundColor: '#6AA084', padding: 15, borderRadius: 5, marginBottom: 20 },
-  headerText: { color: '#000', fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
-  sectionTitle: { fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginBottom: 20 },
-  label: { marginBottom: 5, fontWeight: '500' },
-  required: { color: 'red' },
-  input: { borderColor: '#ccc', borderWidth: 1, borderRadius: 6, padding: 10, marginBottom: 15, backgroundColor: '#fff' },
-  passwordHint: { fontSize: 12, color: '#666', marginBottom: 15 },
-  button: { backgroundColor: '#043D1D', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 10, marginBottom: 30 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  container: { flex: 1, justifyContent: "center", padding: 20 },
+  label: { fontSize: 16, marginBottom: 10 },
+  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 5, marginBottom: 20 },
+  button: { backgroundColor: "#000", paddingVertical: 10, borderRadius: 5, alignItems: "center" },
+  buttonText: { color: "#FFF", fontSize: 16 },
+  disclaimer: { fontSize: 12, color: "#777", textAlign: "center", marginTop: 20 },
+  errorMessage: { color: "red", fontSize: 14, marginTop: 10, textAlign: "center" },
 });
-
-export default RegistroScreen;

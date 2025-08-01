@@ -52,7 +52,7 @@ export default function AlertScreen() {
         if (user.vecindarioId && !isConnected) {
           connectSocket(userId, user.vecindarioId);
           setIsConnected(true);
-          console.log(`Conectado al vecindario ${user.vecindarioId}`);
+          console.log(`🔌 Conectado al vecindario ${user.vecindarioId}`);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -76,7 +76,7 @@ export default function AlertScreen() {
           accuracy: Location.Accuracy.High,
         });
         setLocation(currentLocation.coords);
-        console.log(' Ubicación obtenida:', currentLocation.coords);
+        console.log('📍 Ubicación obtenida:', currentLocation.coords);
       } catch (error) {
         console.error('Error obteniendo ubicación:', error);
         Alert.alert("Error", "No se pudo obtener la ubicación");
@@ -126,20 +126,20 @@ export default function AlertScreen() {
         longitud: location.longitude,
       });
 
-      console.log(' Alarma y ubicación guardadas:', {
+      console.log('✅ Alarma y ubicación guardadas:', {
         alarma: alarmaResponse.data,
         ubicacion: ubicacionResponse.data
       });
 
       // Mostrar notificación local de confirmación
       showNotification(
-        ` Alarma de ${alertType.label}`,
+        `🚨 Alarma de ${alertType.label}`,
         `Alarma activada exitosamente en tu vecindario`,
         'success'
       );
 
     } catch (error) {
-      console.error(' Error activando alarma:', error);
+      console.error('❌ Error activando alarma:', error);
       Alert.alert("Error", "No se pudo activar la alarma. Intenta nuevamente.");
     } finally {
       setIsLoading(false);
@@ -149,7 +149,7 @@ export default function AlertScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}> Alertas de Emergencia</Text>
+        <Text style={styles.headerTitle}>🚨 Alertas de Emergencia</Text>
         <Text style={styles.headerSubtitle}>
           Selecciona el tipo de emergencia para alertar a tu vecindario
         </Text>
@@ -191,7 +191,7 @@ export default function AlertScreen() {
       {!location && (
         <View style={styles.locationWarning}>
           <Text style={styles.locationWarningText}>
-            Obteniendo ubicación...
+            ⚠️ Obteniendo ubicación...
           </Text>
         </View>
       )}

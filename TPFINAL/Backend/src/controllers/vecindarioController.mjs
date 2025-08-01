@@ -1,3 +1,4 @@
+// src/controllers/vecindarioController.mjs
 import * as vecindarioService from '../services/vecindarioService.mjs';
 import catchAsync from '../helpers/catchAsync.mjs';
 

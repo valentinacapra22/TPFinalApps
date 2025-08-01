@@ -1,3 +1,4 @@
+// src/services/vecindarioService.mjs
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -15,9 +16,12 @@ export const getVecindarioById = async (id) => {
 export const createVecindario = async (data) => {
 	const { nombre, ciudad, ubicacion } = data;
 
+	// Validación de datos
 	if (!nombre || !ciudad || !ubicacion) {
 		throw new Error('Todos los campos (nombre, ciudad, ubicacion) son obligatorios');
 	}
+
+	// Crear el vecindario
 	return await prisma.vecindario.create({
 		data: {
 			nombre,

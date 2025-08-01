@@ -1,3 +1,4 @@
+// src/routes/vecindarioRoutes.mjs
 import express from 'express';
 import * as vecindarioController from '../controllers/vecindarioController.mjs';
 

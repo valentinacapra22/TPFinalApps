@@ -1,3 +1,4 @@
+// src/routes/usuarioRoutes.mjs
 import express from 'express';
 import * as usuarioController from '../controllers/usuarioController.mjs';
 import { authenticateToken } from '../middleware/authMiddleware.mjs';

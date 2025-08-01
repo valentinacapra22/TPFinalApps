@@ -1,3 +1,4 @@
+// src/controllers/notificacionController.mjs
 import * as notificacionService from '../services/notificacionService.mjs';
 import catchAsync from '../helpers/catchAsync.mjs';
 

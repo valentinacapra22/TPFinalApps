@@ -1,3 +1,4 @@
+// src/services/notificacionService.mjs
 import { PrismaClient } from '@prisma/client';
 import { io } from '../../init.mjs';
 
@@ -16,6 +17,7 @@ export const getNotificacionById = async (id) => {
 export const createNotificacion = async (data) => {
     const { titulo, notificacion, contenido, tipo, usuarioId } = data;
 
+    // Validación de datos
     if (!titulo || !notificacion || !contenido || !tipo || !usuarioId) {
         throw new Error('Todos los campos (titulo, notificacion, contenido, tipo, fechaHora, usuarioId) son obligatorios');
     }

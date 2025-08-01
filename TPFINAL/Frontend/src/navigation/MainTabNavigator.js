@@ -62,7 +62,7 @@ export default function MainTabNavigator() {
         },
         headerStyle: THEME.headerStyle,
         headerTitleStyle: THEME.headerTitleStyle,
-        headerTitleAlign: "center", 
+        headerTitleAlign: "center", // ✅ This centers the title
       })}
     >
       <Tab.Screen name="Alertas" component={AlertScreen} />
