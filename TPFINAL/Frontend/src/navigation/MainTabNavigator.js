@@ -1,42 +1,11 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import AlertScreen from "../screen/AlertScreen";
 import ProfileScreen from "../screen/ProfileScreen";
-import EditProfileScreen from "../screen/EditProfileScreen";
 import HistoryScreen from "../screen/HistoryScreen";
-import StatisticsScreen from "../screen/StatisticsScreen";
 import { THEME } from "../theme/theme";
 
 const Tab = createBottomTabNavigator();
-const ProfileStack = createStackNavigator();
-
-// Stack para el perfil que incluye la pantalla de edición
-function ProfileStackNavigator() {
-  return (
-    <ProfileStack.Navigator
-      screenOptions={{
-        headerStyle: THEME.headerStyle,
-        headerTitleStyle: THEME.headerTitleStyle,
-        headerTitleAlign: "center",
-      }}
-    >
-      <ProfileStack.Screen 
-        name="ProfileMain" 
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-      />
-      <ProfileStack.Screen 
-        name="EditProfile" 
-        component={EditProfileScreen}
-        options={{ 
-          title: "Editar Perfil",
-          headerBackTitle: "Atrás"
-        }}
-      />
-    </ProfileStack.Navigator>
-  );
-}
 
 export default function MainTabNavigator() {
   return (
@@ -62,13 +31,12 @@ export default function MainTabNavigator() {
         },
         headerStyle: THEME.headerStyle,
         headerTitleStyle: THEME.headerTitleStyle,
-        headerTitleAlign: "center", // ✅ This centers the title
+        headerTitleAlign: "center", 
       })}
     >
       <Tab.Screen name="Alertas" component={AlertScreen} />
-      <Tab.Screen name="Estadísticas" component={StatisticsScreen} />
       <Tab.Screen name="Historial" component={HistoryScreen} />
-      <Tab.Screen name="Perfil" component={ProfileStackNavigator} />
+      <Tab.Screen name="Perfil" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

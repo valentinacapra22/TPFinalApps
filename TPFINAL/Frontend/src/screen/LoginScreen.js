@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
-import Icon from "react-native-vector-icons/Feather"; // Make sure react-native-vector-icons is installed
+import Icon from "react-native-vector-icons/Feather"; 
 
 export default function LoginScreen({ navigation }) {
   const { setAuthData, loginUser } = useAuth();
@@ -25,7 +25,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleLogin = async () => {
-    setError(""); // Clear previous errors
+    setError(""); 
 
     if (!email) {
       setError("Por favor, ingresa tu correo electrónico.");
@@ -46,7 +46,6 @@ export default function LoginScreen({ navigation }) {
       let auth = await loginUser(email, password);
       if (auth) {
         Alert.alert("Éxito", "Inicio de sesión exitoso.");
-        // Navigate to your main app screen here, e.g., navigation.navigate("App");
       } else {
         setError("Correo electrónico o contraseña no válidos.");
       }
@@ -59,7 +58,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleRegister = () => {
-    navigation.navigate("Register"); // Navigates to the RegisterScreen
+    navigation.navigate("Register"); 
     console.log("Estas en register");
   };
 
