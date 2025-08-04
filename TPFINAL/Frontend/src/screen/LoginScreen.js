@@ -43,16 +43,19 @@ export default function LoginScreen({ navigation }) {
 
     setLoading(true);
     try {
-      let auth = await loginUser(email, password);
+      console.log("Iniciando proceso de login...");
+      const auth = await loginUser(email, password);
+      
       if (auth) {
-        Alert.alert("Éxito", "Inicio de sesión exitoso.");
-        // Navigate to your main app screen here, e.g., navigation.navigate("App");
+        console.log("Login exitoso, navegando...");
+        // La navegación será automática por el contexto
       } else {
+        console.log("Login fallido");
         setError("Correo electrónico o contraseña no válidos.");
       }
     } catch (err) {
-      setError("Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo.");
       console.error("Login error:", err);
+      setError(err.message || "Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }

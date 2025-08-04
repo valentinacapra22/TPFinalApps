@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,20 @@ import {
   Dimensions,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   LineChart,
   BarChart,
   PieChart,
   ProgressChart,
 } from "react-native-chart-kit";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { getEstadisticasVecindario } from "../service/AlarmaService";
+import BASE_URL, { USER_API } from '../config/apiConfig';
 
 const { width, height } = Dimensions.get("window");
 
@@ -63,21 +66,20 @@ export default function StatisticsScreen() {
   const [error, setError] = useState(null);
   const [selectedChart, setSelectedChart] = useState("tipo"); // tipo, mes, usuario
   const { authData } = useAuth();
-  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
+  useFocusEffect(
+    useCallback(() => {
       fetchEstadisticas();
-    }
-  }, [isFocused]);
+    }, [])
+  );
 
   const fetchEstadisticas = async () => {
     try {
       setError(null);
       setLoading(true);
 
-      const token = localStorage.getItem("userToken") || authData?.token;
-      const userId = localStorage.getItem("userId") || authData?.userId;
+      const token = await AsyncStorage.getItem("userToken") || authData?.token;
+      const userId = await AsyncStorage.getItem("usuarioId") || authData?.userId;
 
       if (!token || !userId) {
         setError("No se encontró información de autenticación");
@@ -86,7 +88,7 @@ export default function StatisticsScreen() {
       }
 
       // Obtener información del usuario para conseguir el vecindarioId
-      const userResponse = await axios.get(`http://localhost:3000/api/usuarios/${userId}`, {
+      const userResponse = await axios.get(`${USER_API}/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 // frontend/context/NotificationContext.js
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
-import { View, Text, Animated, StyleSheet } from 'react-native';
+import { View, Text, Animated, StyleSheet, Alert } from 'react-native';
 import socket from '../utils/socket';
 
 const NotificationContext = createContext();
@@ -21,6 +21,8 @@ export const NotificationProvider = ({ children }) => {
   // Función para mostrar notificación
   const showNotification = (title, message, type = 'info', data = {}) => {
     try {
+      console.log('🔔 showNotification llamado con:', { title, message, type });
+      
       const newNotification = {
         id: Date.now() + Math.random(), // ID único
         title,
@@ -30,7 +32,12 @@ export const NotificationProvider = ({ children }) => {
         translateY: new Animated.Value(-100)
       };
 
-      setNotifications(prev => [...prev, newNotification]);
+      console.log('📝 Creando nueva notificación:', newNotification.id);
+
+      setNotifications(prev => {
+        console.log('📋 Notificaciones anteriores:', prev.length);
+        return [...prev, newNotification];
+      });
       setNotificationHistory(prev => [...prev, { ...newNotification, timestamp: new Date() }]);
 
       Animated.sequence([
@@ -46,17 +53,20 @@ export const NotificationProvider = ({ children }) => {
           useNativeDriver: true,
         })
       ]).start(() => {
+        console.log('🗑️ Removiendo notificación:', newNotification.id);
         setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
       });
     } catch (error) {
       console.error('Error showing notification:', error);
+      // Fallback a alerta simple
+      Alert.alert(title, message);
     }
   };
 
   // Función para mostrar notificación de alarma
- const showAlarmNotification = (alarmData) => {
-   try {
-     const { emisor, mensaje, tipo } = alarmData;
+  const showAlarmNotification = (alarmData) => {
+    try {
+      const { emisor, mensaje, tipo } = alarmData;
       showNotification(
         `🚨 Alarma de ${tipo}`,
         `${mensaje} - Reportado por: ${emisor}`,
@@ -147,53 +157,56 @@ export const NotificationProvider = ({ children }) => {
     }}>
       {children}
       <View style={styles.notificationsContainer}>
-        {notifications.map((notification, index) => (
-          <Animated.View
-            key={notification.id}
-            style={[
-              styles.notificationContainer,
-              {
-                transform: [{ translateY: notification.translateY }],
-                top: index * 85, // Espacio entre notificaciones
-                backgroundColor: notification.type === 'alarm' ? 'rgba(220, 53, 69, 0.95)' : 'rgba(255, 255, 255, 0.95)'
-              }
-            ]}
-          >
-            <View style={styles.notificationContent}>
-              <View style={styles.headerContainer}>
-                <View style={styles.appIconContainer}>
-                  <Text style={styles.appIcon}>
-                    {notification.type === 'alarm' ? '🚨' : '📢'}
+        {notifications.map((notification, index) => {
+          console.log('🎨 Renderizando notificación:', notification.id, 'en posición:', index);
+          return (
+            <Animated.View
+              key={notification.id}
+              style={[
+                styles.notificationContainer,
+                {
+                  transform: [{ translateY: notification.translateY }],
+                  top: index * 85, // Espacio entre notificaciones
+                  backgroundColor: notification.type === 'alarm' ? 'rgba(220, 53, 69, 0.95)' : 'rgba(255, 255, 255, 0.95)'
+                }
+              ]}
+            >
+              <View style={styles.notificationContent}>
+                <View style={styles.headerContainer}>
+                  <View style={styles.appIconContainer}>
+                    <Text style={styles.appIcon}>
+                      {notification.type === 'alarm' ? '🚨' : '📢'}
+                    </Text>
+                  </View>
+                  <Text style={[
+                    styles.appName,
+                    { color: notification.type === 'alarm' ? '#fff' : '#000' }
+                  ]}>
+                    VigiNet
+                  </Text>
+                  <Text style={[
+                    styles.timeText,
+                    { color: notification.type === 'alarm' ? 'rgba(255,255,255,0.8)' : '#666' }
+                  ]}>
+                    ahora
                   </Text>
                 </View>
                 <Text style={[
-                  styles.appName,
+                  styles.notificationTitle,
                   { color: notification.type === 'alarm' ? '#fff' : '#000' }
                 ]}>
-                  VigiNet
+                  {notification.title}
                 </Text>
                 <Text style={[
-                  styles.timeText,
-                  { color: notification.type === 'alarm' ? 'rgba(255,255,255,0.8)' : '#666' }
+                  styles.notificationMessage,
+                  { color: notification.type === 'alarm' ? 'rgba(255,255,255,0.9)' : '#333' }
                 ]}>
-                  ahora
+                  {notification.message}
                 </Text>
               </View>
-              <Text style={[
-                styles.notificationTitle,
-                { color: notification.type === 'alarm' ? '#fff' : '#000' }
-              ]}>
-                {notification.title}
-              </Text>
-              <Text style={[
-                styles.notificationMessage,
-                { color: notification.type === 'alarm' ? 'rgba(255,255,255,0.9)' : '#333' }
-              ]}>
-                {notification.message}
-              </Text>
-            </View>
-          </Animated.View>
-        ))}
+            </Animated.View>
+          );
+        })}
       </View>
     </NotificationContext.Provider>
   );

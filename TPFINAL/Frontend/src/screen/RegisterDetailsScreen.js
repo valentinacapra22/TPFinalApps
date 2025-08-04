@@ -16,8 +16,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { FontAwesome } from "@expo/vector-icons";
-
-const BASE_URL = "http://localhost:3000/api";
+import BASE_URL from '../config/apiConfig';
 
 export default function RegisterDetailsScreen({ navigation, route }) {
   const { width, height } = useWindowDimensions();

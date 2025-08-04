@@ -20,10 +20,14 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(morgan("dev"));
+
+// Configuración de CORS más permisiva para desarrollo
 app.use(
   cors({
-    origin: ["http://localhost:8081", "http://localhost:3001"], 
-    credentials: true, // Si usas cookies o autenticación basada en sesión
+    origin: true, // Permitir todas las conexiones en desarrollo
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
 

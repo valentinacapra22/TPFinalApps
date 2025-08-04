@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
-import {View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, Linking, TouchableOpacity, TextInput,} from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, Linking, TouchableOpacity, TextInput, Alert,} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
-const BASE_URL = "http://localhost:3000/api";
-const ALERTS_API = `${BASE_URL}/alarmas`;
-const USER_API = `${BASE_URL}/usuarios`;
+import { ALERTS_API, USER_API } from "../config/apiConfig";
 
 const formatDate = (dateString) => {
   try {
@@ -36,13 +34,12 @@ export default function HistoryScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { authData } = useAuth();
-  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
+  useFocusEffect(
+    useCallback(() => {
       fetchAlerts();
-    }
-  }, [isFocused]);
+    }, [])
+  );
 
   useEffect(() => {
     if (searchQuery) {
@@ -62,8 +59,8 @@ export default function HistoryScreen() {
       setError(null);
       setLoading(true);
 
-      const token = localStorage.getItem("userToken") || authData?.token;
-      const userId = localStorage.getItem("userId") || authData?.userId;
+      const token = await AsyncStorage.getItem("userToken") || authData?.token;
+      const userId = await AsyncStorage.getItem("usuarioId") || authData?.userId;
 
       if (!token || !userId) {
         setError("No se encontró información de autenticación");

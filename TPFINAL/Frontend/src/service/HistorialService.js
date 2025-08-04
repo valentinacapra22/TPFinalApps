@@ -1,6 +1,6 @@
 import axios from 'axios';
-
-const BASE_URL = "http://localhost:3000/api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from '../config/apiConfig';
 
 // Configurar axios con interceptor para el token
 const api = axios.create({
@@ -9,8 +9,8 @@ const api = axios.create({
 });
 
 // Interceptor para agregar token de autenticación
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("userToken");
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem("userToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

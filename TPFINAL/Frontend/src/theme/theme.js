@@ -6,13 +6,12 @@ export const THEME = {
     headerBackground: "#1B786D", // Fondo del header
   },
   headerStyle: {
-    backgroundColor: "white",
     backgroundColor: "#1B786D", // Fondo del header en verde
     elevation: 0,
     shadowOpacity: 0,
   },
   headerTitleStyle: {
     fontWeight: "600",
-    color: "#000000", // Cambia el color del texto a blanco
+    color: "#ffffff", // Color del texto en blanco para contraste
   },
 };

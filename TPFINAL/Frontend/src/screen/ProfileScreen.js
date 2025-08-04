@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {  View, Text, StyleSheet, ScrollView, ActivityIndicator,  TouchableOpacity, Modal } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput, ActivityIndicator, Modal } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
-const BASE_URL = "http://localhost:3000/api";
-const VERIFY_TOKEN_API = `${BASE_URL}/auth/validate-token`;
-const USER_API = `${BASE_URL}/usuarios`;
-const NEIGHBORHOOD_API = `${BASE_URL}/vecindarios`;
+import { USER_API, NEIGHBORHOOD_API } from "../config/apiConfig";
+import BASE_URL from '../config/apiConfig';
 
 axios.defaults.baseURL = BASE_URL;
 
@@ -25,28 +23,31 @@ export default function ProfileScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const token = localStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        navigation.navigate("Login");
+        logout();
         return;
       }
 
-      const { data: verifyData } = await axios.post(VERIFY_TOKEN_API, { token });
-      const userId = verifyData.usuarioId.toString();
-      localStorage.setItem("userId", userId);
-
+      // Aseguramos que el token esté en las cabeceras para la petición
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const { data: user } = await axios.get(`${USER_API}/${userId}`);
+      // Hacemos una única y más eficiente llamada al endpoint '/me'
+      const { data: user } = await axios.get(`${USER_API}/me`);
       setUserData(user);
+
+      // Guardamos el ID del usuario para otros usos si es necesario
+      if (user.usuarioId) {
+        await AsyncStorage.setItem("usuarioId", user.usuarioId.toString());
+      }
 
       if (user.vecindarioId) {
         fetchNeighborhoodName(user.vecindarioId);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error fetching user data:", error);
       alert("Failed to load user data. Please try again.");
-      navigation.navigate("Login");
+      logout();
     } finally {
       setLoading(false);
     }
@@ -62,15 +63,27 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleLogout = () => {
+    // Abre el modal de confirmación en lugar de cerrar sesión directamente
     setIsLogoutModalVisible(true);
+  };
+  
+  const confirmLogout = async () => {
+    try {
+      await logout();
+      setIsLogoutModalVisible(false);
+    } catch (error) {
+      console.error("Error en logout:", error);
+      setIsLogoutModalVisible(false);
+      logout(); // Intenta hacer logout de todas formas
+    }
   };
 
   const formatLabel = (label) => {
     return label
-      .replace(/_/g, " ") 
-      .replace(/calle1/i, "Calle 1") 
-      .replace(/calle2/i, "Calle 2") 
-      .replace(/\b\w/g, (char) => char.toUpperCase()); 
+      .replace(/_/g, " ")
+      .replace(/calle1/i, "Calle 1")
+      .replace(/calle2/i, "Calle 2")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   if (loading) {
@@ -104,13 +117,13 @@ export default function ProfileScreen({ navigation }) {
         </View>
       )}
 
-      <TouchableOpacity 
-        style={styles.editButton} 
-        onPress={() => navigation.navigate("EditProfile", { 
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => navigation.navigate("EditProfile", {
           userData: userData,
           onUpdate: (updatedUser) => {
             setUserData(updatedUser);
-            fetchUserData(); 
+            fetchUserData();
           }
         })}
       >
@@ -140,10 +153,7 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.confirmButton]}
-                onPress={() => {
-                  logout();
-                  navigation.navigate("Login");
-                }}
+                onPress={confirmLogout} // Llama a la nueva función de confirmación
               >
                 <Text style={styles.modalButtonText}>Cerrar Sesión</Text>
               </TouchableOpacity>

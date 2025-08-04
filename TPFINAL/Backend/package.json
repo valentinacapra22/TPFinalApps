@@ -1,6 +1,10 @@
 {
   "scripts": {
-    "dev": "node init.mjs"
+    "dev": "node init.mjs",
+    "setup": "npx prisma migrate dev && node setup-db.mjs",
+    "db:generate": "npx prisma generate",
+    "db:migrate": "npx prisma migrate dev",
+    "db:reset": "npx prisma migrate reset"
   },
   "dependencies": {
     "@prisma/client": "6.3.1",
