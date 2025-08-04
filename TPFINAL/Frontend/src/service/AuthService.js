@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+// Cambiar localhost por la IP de tu computadora
+// Encuentra tu IP con: ipconfig (Windows) o ifconfig (Mac/Linux)
 const BASE_URL = "http://localhost:3000/api";
 
 // authService.js
